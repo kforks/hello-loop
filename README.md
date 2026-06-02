@@ -1,3 +1,7 @@
+# hello-loop
+
+A lightweight web app starter built with React, TypeScript, Vite, and Tailwind CSS. Created by [Forked Software](https://forkedsoftware.com) as a base for client projects — fast to spin up, easy to deploy to GitHub Pages.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -71,3 +75,5 @@ export default defineConfig([
   },
 ])
 ```
+
+Preview test — 1780423160
