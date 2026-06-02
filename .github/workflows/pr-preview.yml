@@ -1,0 +1,41 @@
+# .github/workflows/pr-preview.yml
+# Builds the PR and deploys a live preview to GitHub Pages under /pr-preview/pr-N/,
+# then posts a sticky comment on the PR with the plain preview URL (tap it on your phone).
+# Cleans the preview up automatically when the PR is closed/merged.
+
+name: PR Preview
+concurrency: preview-${{ github.ref }}
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install and build
+        if: github.event.action != 'closed'
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./dist/        # Vite builds to dist/ (not build/)
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto               # deploy on open/update, remove on close
+          qr-code: false             # plain URL in the PR comment (no QR)

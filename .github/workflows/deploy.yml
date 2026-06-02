@@ -1,0 +1,38 @@
+# .github/workflows/deploy.yml
+# Ships to production (your custom domain) on every merge to main.
+# clean-exclude keeps the /pr-preview/ directory so live previews aren't wiped.
+# Keep your CNAME file at public/CNAME so Vite copies it into dist/ on every build —
+# that preserves your GoDaddy custom domain across deploys.
+
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install and build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean-exclude: |
+            pr-preview/
